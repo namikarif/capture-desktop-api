@@ -27,8 +27,8 @@ export class EventGateway {
     console.log({computers: this.computers});
     if (!this.computers.includes(id)) {
       this.computers.push(id);
-      this.server.emit('update-computers', this.computers);
     }
+    this.server.emit('update-computers', this.computers);
     client.join(id);
   }
 
