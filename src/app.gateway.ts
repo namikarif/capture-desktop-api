@@ -23,6 +23,8 @@ export class EventGateway {
     @MessageBody() { id }: { id: string },
     @ConnectedSocket() client: Socket,
   ) {
+    console.log({id});
+    console.log({computers: this.computers});
     if (!this.computers.includes(id)) {
       this.computers.push(id);
       this.server.emit('update-computers', this.computers);
