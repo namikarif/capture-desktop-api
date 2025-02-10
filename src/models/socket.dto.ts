@@ -8,3 +8,8 @@ export class StreamData {
   buffer: Buffer;
   deviceId: string;
 }
+
+export class VideoBlobData {
+  blob: any;
+  id: string;
+}
