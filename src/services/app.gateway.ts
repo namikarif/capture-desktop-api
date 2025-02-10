@@ -5,10 +5,12 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Server, Socket } from 'socket.io';
 import { AppService } from './app.service';
 import { DeviceDto } from '../models/device.dto';
-import { DeviceState } from '../models/socket.dto';
+import { DeviceState, VideoBlobData } from '../models/socket.dto';
 
 @WebSocketGateway({
   cors: {
@@ -18,6 +20,8 @@ import { DeviceState } from '../models/socket.dto';
 export class AppGateway {
   @WebSocketServer()
   server: Server;
+
+  private writeStream;
 
   constructor(private appService: AppService) {}
 
@@ -39,8 +43,22 @@ export class AppGateway {
 
   @SubscribeMessage('stop-stream')
   handleStopStream(@MessageBody() id: string) {
-    console.log({id});
+    this.writeStream?.end();
     this.server.emit(`stop-stream-${id}`);
+  }
+
+  @SubscribeMessage('stream-blob-data')
+  handleStreamBlobData(@MessageBody() data: VideoBlobData) {
+
+    const filePath = path.join(__dirname, '../../uploads', `${data.id}.webm`);
+
+    if (!this.writeStream) {
+      this.writeStream = fs.createWriteStream(filePath, { flags: 'a' });
+    }
+
+    this.writeStream.write(Buffer.from(data.blob));
+
+    this.server.emit('stream-blob', data);
   }
 
   @SubscribeMessage('change-state')
