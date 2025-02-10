@@ -6,48 +6,47 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { AppService } from './app.service';
+import { DeviceDto } from '../models/device.dto';
+import { DeviceState } from '../models/socket.dto';
 
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
-export class EventGateway {
+export class AppGateway {
   @WebSocketServer()
   server: Server;
 
-  private computers: string[] = [];
+  constructor(private appService: AppService) {}
 
   @SubscribeMessage('register-computer')
-  handleRegister(
-    @MessageBody() { id }: { id: string },
+  async handleRegister(
+    @MessageBody() device: DeviceDto,
     @ConnectedSocket() client: Socket,
   ) {
-    if (!this.computers.includes(id)) {
-      this.computers.push(id);
-    }
-    this.server.emit('update-computers', this.computers);
-    client.join(id);
+    console.log({ handleRegister: device });
+    this.appService.setDevice(device);
+    this.server.emit('update-computers', this.appService.getDevices());
+    await client.join(device.id);
   }
 
   @SubscribeMessage('start-stream')
   handleStartStream(@MessageBody() id: string) {
-    this.server.emit('start-stream');
-  }
-
-  @SubscribeMessage('computer-state')
-  handleComputerState(@MessageBody() data: Record<string, boolean>) {
-    this.server.emit('computer-state', data);
+    this.server.emit(`start-stream-${id}`);
   }
 
   @SubscribeMessage('stop-stream')
   handleStopStream(@MessageBody() id: string) {
-    this.server.emit('stop-stream');
+    console.log({id});
+    this.server.emit(`stop-stream-${id}`);
   }
 
-  @SubscribeMessage('stream-data')
-  handleStreamData(@MessageBody() data: Buffer) {
-    this.server.emit('stream-video-data', data);
+  @SubscribeMessage('change-state')
+  handleChangeState(@MessageBody() data: DeviceState) {
+    this.appService.changeDeviceState(data);
+    this.server.emit(`change-state`, data);
   }
 
   @SubscribeMessage('offer')
