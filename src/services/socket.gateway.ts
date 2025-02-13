@@ -25,11 +25,13 @@ export class SocketGateway {
   private writeCamera: StreamDto = {
     stream: undefined,
     filePath: '',
+    deviceId: '',
     startTime: 0,
   };
   private writeDesktop: StreamDto = {
     stream: undefined,
     filePath: '',
+    deviceId: '',
     startTime: 0,
   };
 
@@ -56,7 +58,30 @@ export class SocketGateway {
     this.writeDesktop.stream?.end();
     const endTime = new Date().getTime();
 
-    // await this.deviceService.setDeviceVideo();
+    await this.deviceService.setDeviceVideo({
+      deviceId: this.writeDesktop.deviceId,
+      videoPath: this.writeDesktop.filePath,
+      videoTime: endTime - this.writeDesktop.startTime,
+    });
+
+    await this.deviceService.setDeviceVideo({
+      deviceId: this.writeCamera.deviceId,
+      videoPath: this.writeCamera.filePath,
+      videoTime: endTime - this.writeCamera.startTime,
+    });
+
+    this.writeCamera = {
+      stream: undefined,
+      filePath: '',
+      deviceId: '',
+      startTime: 0,
+    };
+    this.writeDesktop = {
+      stream: undefined,
+      filePath: '',
+      deviceId: '',
+      startTime: 0,
+    };
     this.server.emit(`stop-stream-${id}`);
   }
 
@@ -64,9 +89,10 @@ export class SocketGateway {
   handleStreamBlobData(@MessageBody() data: VideoBlobData) {
     if (data.folder === 'desktop') {
       this.writeDesktop.startTime = data.startTime;
+      this.writeDesktop.deviceId = data.deviceId;
       this.writeDesktop.filePath = path.join(
         __dirname,
-        `../../src/uploads/${data.folder}`,
+        `../uploads/${data.folder}`,
         `${data.deviceId}.webm`,
       );
       if (!this.writeDesktop.stream) {
@@ -81,9 +107,10 @@ export class SocketGateway {
       this.writeDesktop.stream.write(Buffer.from(data.blob));
     } else {
       this.writeCamera.startTime = data.startTime;
+      this.writeCamera.deviceId = data.deviceId;
       this.writeCamera.filePath = path.join(
         __dirname,
-        `../../src/uploads/${data.folder}`,
+        `../uploads/${data.folder}`,
         `${data.deviceId}.webm`,
       );
       if (!this.writeCamera.stream) {
