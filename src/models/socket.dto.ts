@@ -4,6 +4,12 @@ export class DeviceState {
   status: boolean;
 }
 
+export class DeviceVideoFto {
+  deviceId: string;
+  videoTime: number;
+  videoPath: string;
+}
+
 export class StreamData {
   buffer: Buffer;
   deviceId: string;
