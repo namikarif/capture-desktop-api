@@ -1,6 +1,8 @@
 export class DeviceDto {
   id: string;
+  deviceId: string;
   name: string;
-  status: boolean;
+  shutdown: boolean;
   isEnable: boolean;
+  isLock: boolean;
 }
