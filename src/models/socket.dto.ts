@@ -1,5 +1,5 @@
 export class DeviceState {
-  id: string;
+  deviceId: string;
   isEnable: boolean;
   status: boolean;
 }
@@ -11,5 +11,7 @@ export class StreamData {
 
 export class VideoBlobData {
   blob: any;
-  id: string;
+  deviceId: string;
+  folder: string;
+  startTime: number;
 }
