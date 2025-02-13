@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DeviceDto } from '../models/device.dto';
-import { DeviceState } from '../models/socket.dto';
+import { DeviceState, DeviceVideoFto } from '../models/socket.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeviceEntity } from '../entities/device.entity';
 import { Repository } from 'typeorm';
@@ -39,7 +39,8 @@ export class DeviceService {
     );
   }
 
-  async setDeviceVideo(deviceState: DeviceState) {
-    await this.deviceVideosEntityRepository.create();
+  async setDeviceVideo(deviceVideo: DeviceVideoFto) {
+    const videoCreate = this.deviceVideosEntityRepository.create(deviceVideo);
+    await this.deviceVideosEntityRepository.save(videoCreate);
   }
 }
