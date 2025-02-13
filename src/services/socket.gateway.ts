@@ -87,14 +87,18 @@ export class SocketGateway {
 
   @SubscribeMessage('stream-blob-data')
   handleStreamBlobData(@MessageBody() data: VideoBlobData) {
+    const folderPath = path.join(__dirname, `../src/uploads/${data.folder}`);
+    const filePath = path.join(folderPath, `${data.deviceId}.webm`);
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
+
     if (data.folder === 'desktop') {
       this.writeDesktop.startTime = data.startTime;
       this.writeDesktop.deviceId = data.deviceId;
-      this.writeDesktop.filePath = path.join(
-        __dirname,
-        `../uploads/${data.folder}`,
-        `${data.deviceId}.webm`,
-      );
+
+      this.writeDesktop.filePath = filePath;
+
       if (!this.writeDesktop.stream) {
         this.writeDesktop.stream = fs.createWriteStream(
           this.writeDesktop.filePath,
@@ -108,11 +112,9 @@ export class SocketGateway {
     } else {
       this.writeCamera.startTime = data.startTime;
       this.writeCamera.deviceId = data.deviceId;
-      this.writeCamera.filePath = path.join(
-        __dirname,
-        `../uploads/${data.folder}`,
-        `${data.deviceId}.webm`,
-      );
+
+      this.writeCamera.filePath = filePath;
+
       if (!this.writeCamera.stream) {
         this.writeCamera.stream = fs.createWriteStream(
           this.writeCamera.filePath,
