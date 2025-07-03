@@ -7,7 +7,7 @@ import { DeviceEntity } from './entities/device.entity';
 import { DeviceVideosEntity } from './entities/device-videos.entity';
 
 const mongoPass = '9uJZnMZt5vkIQ9NW';
-const mongoUri = `mongodb+srv://namigabdukarimov:${mongoPass}@capture-desktop.ducum.mongodb.net/db?retryWrites=true&w=majority&appName=capture-desktop`;
+const mongoUri = `mongodb+srv://namigabdukerimov:${9uJZnMZt5vkIQ9NW}@cluster0.2yxsf2j.mongodb.net`;
 
 const entities = [DeviceEntity, DeviceVideosEntity];
 
