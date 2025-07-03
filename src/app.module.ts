@@ -14,12 +14,10 @@ const entities = [DeviceEntity, DeviceVideosEntity];
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mongodb',
+       type: 'mongodb',
       url: mongoUri,
       database: 'db',
       logger: 'advanced-console',
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       synchronize: false,
       autoLoadEntities: true,
     }),
