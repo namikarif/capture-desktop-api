@@ -6,7 +6,7 @@ import { SocketGateway } from './services/socket.gateway';
 import { DeviceEntity } from './entities/device.entity';
 import { DeviceVideosEntity } from './entities/device-videos.entity';
 
-const mongoPass = 'bsw1cXhwpdnSEAeR';
+const mongoPass = '9uJZnMZt5vkIQ9NW';
 const mongoUri = `mongodb+srv://namigabdukarimov:${mongoPass}@capture-desktop.ducum.mongodb.net/db?retryWrites=true&w=majority&appName=capture-desktop`;
 
 const entities = [DeviceEntity, DeviceVideosEntity];
